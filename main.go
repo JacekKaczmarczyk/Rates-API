@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/JacekKaczmarczyk/nbpApi/providers"
+	"github.com/JacekKaczmarczyk/Rates-API/providers"
 	"github.com/gin-gonic/gin"
 )
 

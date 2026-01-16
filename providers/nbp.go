@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/JacekKaczmarczyk/nbpApi/utils"
+	"github.com/JacekKaczmarczyk/Rates-API/utils"
 )
 
 type NbpResponse struct {

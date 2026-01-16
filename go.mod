@@ -1,4 +1,4 @@
-module github.com/JacekKaczmarczyk/nbpApi
+module github.com/JacekKaczmarczyk/Rates-API
 
 go 1.25.5
 
