@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/JacekKaczmarczyk/Rates-API/providers"
@@ -20,9 +21,13 @@ func getCurrencies(c *gin.Context) {
 
 	provider, exists := providersMap[providerName]
 	if !exists {
+		supportedProviders := make([]string, 0, len(providersMap))
+		for name := range providersMap {
+			supportedProviders = append(supportedProviders, name)
+		}
 		c.JSON(http.StatusBadRequest, providers.ErrorResponse{
 			Message: "unknown provider: " + providerName,
-			Details: "supported providers: nbp",
+			Details: fmt.Sprintf("supported providers: %v", supportedProviders),
 		})
 		return
 	}

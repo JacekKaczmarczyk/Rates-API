@@ -215,6 +215,20 @@ func TestNbpProvider_GetCurrencies_InvalidDate(t *testing.T) {
 	}
 }
 
+func TestNbpProvider_GetCurrencies_InvalidCurrencyCode(t *testing.T) {
+	provider := NewNbpProvider()
+
+	_, err, statusCode := provider.GetCurrencies([]string{"usd"}, "")
+
+	if err == nil {
+		t.Error("Expected error for invalid currency code, got nil")
+	}
+
+	if statusCode != http.StatusBadRequest {
+		t.Errorf("Expected status code 400, got %d", statusCode)
+	}
+}
+
 func TestNbpProvider_GetCurrencies_NoRatesFound(t *testing.T) {
 	mockResponse := []NbpResponse{
 		{

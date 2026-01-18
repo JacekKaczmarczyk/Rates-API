@@ -69,19 +69,3 @@ func TestParseQueryParams(t *testing.T) {
 		})
 	}
 }
-
-// Mock provider for testing
-// type mockProvider struct{}
-
-// func (m *mockProvider) GetCurrencies(codes []string, date string) (providers.Response, error, int) {
-// 	rates := make([]providers.RateValue, len(codes))
-// 	for i, code := range codes {
-// 		rates[i] = providers.RateValue{Code: code, Value: 1.0}
-// 	}
-
-// 	return providers.Response{
-// 		AsOF:     date,
-// 		Provider: "Mock",
-// 		Rates:    rates,
-// 	}, nil, http.StatusOK
-// }

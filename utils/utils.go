@@ -12,3 +12,15 @@ func ValidateDate(date string, dateFormat string) bool {
 
 	return true
 }
+
+func ValidateCurrencyCodeFormat(code string) bool {
+	if len(code) != 3 {
+		return false
+	}
+	for _, r := range code {
+		if r < 'A' || r > 'Z' {
+			return false
+		}
+	}
+	return true
+}

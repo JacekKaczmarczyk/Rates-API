@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/JacekKaczmarczyk/Rates-API/utils"
 )
@@ -37,6 +38,13 @@ func NewNbpProvider() *NbpProvider {
 }
 
 func (p *NbpProvider) GetCurrencies(codes []string, date string) (Response, error, int) {
+	// Validate currency code formats before making request
+	for _, code := range codes {
+		if !utils.ValidateCurrencyCodeFormat(code) {
+			return Response{}, fmt.Errorf("invalid currency code format: %s", code), http.StatusBadRequest
+		}
+	}
+
 	req, err := p.createGetRequest(date)
 	if err != nil {
 		return Response{}, err, http.StatusBadRequest
@@ -79,7 +87,10 @@ func (p *NbpProvider) createGetRequest(date string) (*http.Request, error) {
 }
 
 func (p *NbpProvider) fetchNbpData(req *http.Request) ([]NbpResponse, error, int) {
-	res, err := http.DefaultClient.Do(req)
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
@@ -90,7 +101,10 @@ func (p *NbpProvider) fetchNbpData(req *http.Request) ([]NbpResponse, error, int
 		return nil, err, http.StatusInternalServerError
 	}
 	if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("NBP API returned status %d: %s", res.StatusCode, string(body)), res.StatusCode
+		if res.StatusCode >= 500 {
+			return nil, fmt.Errorf("NBP API unavailable (status %d): %s", res.StatusCode, string(body)), http.StatusBadGateway
+		}
+		return nil, fmt.Errorf("NBP API returned status %d: %s", res.StatusCode, string(body)), http.StatusBadRequest
 	}
 
 	var response []NbpResponse

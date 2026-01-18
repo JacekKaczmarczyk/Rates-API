@@ -52,3 +52,66 @@ func TestValidateDate(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateCurrencyCodeFormat(t *testing.T) {
+	tests := []struct {
+		name     string
+		code     string
+		expected bool
+	}{
+		{
+			name:     "valid uppercase code",
+			code:     "USD",
+			expected: true,
+		},
+		{
+			name:     "valid another code",
+			code:     "EUR",
+			expected: true,
+		},
+		{
+			name:     "lowercase code",
+			code:     "usd",
+			expected: false,
+		},
+		{
+			name:     "mixed case",
+			code:     "UsD",
+			expected: false,
+		},
+		{
+			name:     "too short",
+			code:     "US",
+			expected: false,
+		},
+		{
+			name:     "too long",
+			code:     "USDD",
+			expected: false,
+		},
+		{
+			name:     "empty string",
+			code:     "",
+			expected: false,
+		},
+		{
+			name:     "numbers",
+			code:     "123",
+			expected: false,
+		},
+		{
+			name:     "special characters",
+			code:     "U$D",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ValidateCurrencyCodeFormat(tt.code)
+			if result != tt.expected {
+				t.Errorf("ValidateCurrencyCodeFormat(%q) = %v; want %v", tt.code, result, tt.expected)
+			}
+		})
+	}
+}
