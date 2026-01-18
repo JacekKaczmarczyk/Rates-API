@@ -47,7 +47,10 @@ func (p *NbpProvider) GetCurrencies(codes []string, date string) (Response, erro
 
 	req, err := p.createGetRequest(date)
 	if err != nil {
-		return Response{}, err, http.StatusBadRequest
+		if date != "" && !utils.ValidateDate(date, p.DateFormat) {
+			return Response{}, err, http.StatusBadRequest
+		}
+		return Response{}, err, http.StatusInternalServerError
 	}
 
 	response, err, statusCode := p.fetchNbpData(req)
@@ -101,10 +104,7 @@ func (p *NbpProvider) fetchNbpData(req *http.Request) ([]NbpResponse, error, int
 		return nil, err, http.StatusInternalServerError
 	}
 	if res.StatusCode != http.StatusOK {
-		if res.StatusCode >= 500 {
-			return nil, fmt.Errorf("NBP API unavailable (status %d): %s", res.StatusCode, string(body)), http.StatusBadGateway
-		}
-		return nil, fmt.Errorf("NBP API returned status %d: %s", res.StatusCode, string(body)), http.StatusBadRequest
+		return nil, fmt.Errorf("NBP API returned status %d: %s", res.StatusCode, string(body)), http.StatusBadGateway
 	}
 
 	var response []NbpResponse
